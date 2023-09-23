@@ -12,13 +12,33 @@ const initialState = {
 };
 
 const todoReducers = {
+  storeLocally: (state) => {
+    localStorage.setItem("todos", JSON.stringify(state.todos));
+  },
   addNewTodo: (state, action) => {
     const newTodo = {
-      id: nanoid,
+      id: nanoid(),
       text: action.payload.text,
       completed: false,
     };
     state.todos.push(newTodo);
+  },
+  removeTodo: (state, action) => {
+    state.todos = state.todos.filter(
+      (currentTodo) => currentTodo.id !== action.payload.id
+    );
+  },
+  updateTodo: (state, action) => {
+    const [filteredTodo] = state.todos.filter(
+      (currentTodo) => currentTodo.id === action.payload.id
+    );
+    filteredTodo.text = action.payload.text;
+  },
+  toggleComplete: (state, action) => {
+    const [filteredTodo] = state.todos.filter(
+      (currentTodo) => currentTodo.id === action.payload.id
+    );
+    filteredTodo.completed = !filteredTodo.completed;
   },
 };
 
@@ -28,6 +48,12 @@ export const todoSlice = createSlice({
   reducers: todoReducers,
 });
 
-export const { addNewTodo } = todoSlice.actions;
+export const {
+  addNewTodo,
+  storeLocally,
+  updateTodo,
+  removeTodo,
+  toggleComplete,
+} = todoSlice.actions;
 
 export default todoSlice.reducer;
