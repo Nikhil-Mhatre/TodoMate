@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addNewTodo, storeLocally } from "../app/todoSlice";
+import { useState, useDispatch, addNewTodo, storeLocally } from "./index";
 
 function TodoForm() {
   const [todo, setTodo] = useState("");

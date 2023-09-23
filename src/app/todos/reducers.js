@@ -1,19 +1,11 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "../index";
 
-const LOCAL_STORAGE = JSON.parse(localStorage.getItem("todos"));
-
-const initialState = {
-  todos:
-    LOCAL_STORAGE !== null
-      ? LOCAL_STORAGE.length > 0
-        ? LOCAL_STORAGE
-        : []
-      : [],
-};
-
-const todoReducers = {
+export default {
   storeLocally: (state) => {
     localStorage.setItem("todos", JSON.stringify(state.todos));
+  },
+  updateTodoList:(state,action)=>{
+    state.todos = action.payload.newTodoList
   },
   addNewTodo: (state, action) => {
     const newTodo = {
@@ -41,19 +33,3 @@ const todoReducers = {
     filteredTodo.completed = !filteredTodo.completed;
   },
 };
-
-export const todoSlice = createSlice({
-  name: "todo",
-  initialState,
-  reducers: todoReducers,
-});
-
-export const {
-  addNewTodo,
-  storeLocally,
-  updateTodo,
-  removeTodo,
-  toggleComplete,
-} = todoSlice.actions;
-
-export default todoSlice.reducer;
