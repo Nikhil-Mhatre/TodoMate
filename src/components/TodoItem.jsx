@@ -32,7 +32,7 @@ function TodoItem({ todo, index }) {
   return (
     <Draggable draggableId={todo.id} index={index}>
       {(provided) => (
-        <div
+        <li
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -76,7 +76,7 @@ function TodoItem({ todo, index }) {
           >
             ❌
           </button>
-        </div>
+        </li>
       )}
     </Draggable>
   );

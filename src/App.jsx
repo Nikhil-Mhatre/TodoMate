@@ -2,42 +2,31 @@ import { useSelector } from "react-redux";
 import TodoForm from "./components/TodoForm";
 import TodoItem from "./components/TodoItem";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeLocally, updateTodoList } from "./components";
-import { useState } from "./components";
-import { useEffect } from "react";
 
 function App() {
   const todos = useSelector((state) => state.todo.todos);
   const [isMount, setIsMount] = useState(true);
   const dispatch = useDispatch();
-  let newTodo = [...todos];
 
   const dragEndHandler = (result) => {
-    const { destination, source, draggableId } = result;
-    if (!destination) return;
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    [newTodo[source.index], newTodo[destination.index]] = [
-      newTodo[destination.index],
-      newTodo[source.index],
-    ];
+    if (!result) return;
+    const newTodos = [...todos];
+    const [reorderedItem] = newTodos.splice(result.source.index, 1);
+    newTodos.splice(result.destination.index, 0, reorderedItem);
     setIsMount(false);
     setTimeout(() => {
-      dispatch(updateTodoList({ newTodoList: newTodo }));
-    }, 300);
+      dispatch(updateTodoList({ newTodoList: newTodos }));
+      dispatch(storeLocally())
+    }, [300]);
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsMount(true);
-    }, 300);
-
+    }, [300]);
     return () => {
       clearTimeout(timer);
     };
@@ -56,11 +45,13 @@ function App() {
           </div>
           <Droppable droppableId="wdfd">
             {(provided) => (
-              <div
+              <ul
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className={`flex flex-wrap gap-y-3 transition-all ease-in-out duration-3p[00
-                ${!isMount && "opacity-0"}`}
+                className={`flex flex-wrap gap-y-3 transition-all
+                 ease-in-out duration-300
+                 ${!isMount && "opacity-0"}
+                 `}
               >
                 {todos.map((currentTodo, index) => (
                   <TodoItem
@@ -70,7 +61,7 @@ function App() {
                   />
                 ))}
                 {provided.placeholder}
-              </div>
+              </ul>
             )}
           </Droppable>
         </div>
